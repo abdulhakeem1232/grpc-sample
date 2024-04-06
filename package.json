@@ -1,0 +1,24 @@
+{
+  "name": "order-grpc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-product": "node ./product/main.js",
+  "start-order": "node ./order/main.js",
+  "start-main": "node ./main/main.js",
+  "start": "concurrently \"npm run start-product\" \"npm run start-order\" \"npm run start-main\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.5",
+    "@grpc/proto-loader": "^0.7.12",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
