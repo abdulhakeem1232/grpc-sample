@@ -21,49 +21,55 @@ const app = express();
 app.use(express.json());
 
 const restPort = 5000;
-let orders = {};
-
-function processAsync(order) {
-    productStub.find({ id: order.productId }, (err, product) => {
-        if (err) return;
-
-        orders[order.id].product = product;
-        const call = orderStub.findOrder({
-            orderId: order.id,
-            productId: product.id
-        });
-        call.on('data', (statusUpdate) => {
-            orders[order.id].status = statusUpdate.status;
-        });
-    });
-}
 
 app.post('/orders', (req, res) => {
     if (!req.body.productId) {
         res.status(400).send('Product identifier is not set');
         return;
     }
-    let orderId = Object.keys(orders).length + 1;
-    let order = {
-        id: orderId,
-        status: 0,
-        productId: req.body.productId,
-        createdAt: new Date().toLocaleString()
-    };
-    orders[order.id] = order;
-    processAsync(order);
-    res.send(order);
+    const { productId, quantity } = req.body
+    orderStub.PlaceOrder({ productId, quantity }, (err, response) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        console.log(response);
+        res.json(response);
+    });
 });
 
 app.get('/orders/:id', (req, res) => {
     console.log('ll');
-    if (!req.params.id || !orders[req.params.id]) {
+    console.log(req.params, 'srg');
+    if (!req.params.id) {
         res.status(400).send('Order not found');
         return;
     }
-    res.send(orders[req.params.id]);
+    const id = req.params
+    orderStub.findOrder({ id }, (err, response) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json(response);
+    });
 });
-
+app.get('/products/:id', (req, res) => {
+    console.log('ll');
+    console.log(req.params, 'srg');
+    if (!req.params.id) {
+        res.status(400).send('Product not found');
+        return;
+    }
+    const id = req.params
+    productStub.Find({ id }, (err, response) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json(response);
+    });
+});
 app.listen(restPort, () => {
     console.log(`RESTful API is listening on port ${restPort}`)
 });

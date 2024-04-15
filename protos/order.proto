@@ -1,21 +1,22 @@
 syntax = "proto3";
 
 service Orders {
-    rpc findOrder(OrderRequest) returns (UpdateStatus);
+    rpc findOrder(OrderRequest) returns (OrderResponse) {}
+    rpc PlaceOrder (PlaceOrderRequest) returns (OrderResponse) {}
 }
 
 message OrderRequest {
-    uint32 productId = 1;
-    uint32 orderId = 2;
+    int32 orderId = 1;
 }
 
-enum OrderStatus {
-    NEW = 1;
-    QUEUED = 2;
-    PROCESSING = 3;
-    DONE = 4;
+message PlaceOrderRequest {
+  uint32 productId = 1;
+  int32 quantity = 2;
 }
 
-message UpdateStatus {
-    OrderStatus status = 1;
+message OrderResponse {
+  string orderId = 1;
+  uint32 productId = 2;
+  int32 quantity = 3;
+  string productName = 4;
 }

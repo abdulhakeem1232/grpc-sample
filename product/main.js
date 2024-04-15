@@ -39,7 +39,7 @@ function findProduct(call, callback) {
 }
 
 const server = new grpc.Server();
-server.addService(productProto.Products.service, { find: findProduct })
+server.addService(productProto.Products.service, { Find: findProduct })
 server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () => {
     server.start();
     console.log('product running');
